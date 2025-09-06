@@ -1,13 +1,14 @@
 pipeline {
-    agent {
-        node {
-            label 'node'
-            nodeJS 'NodeJS-24'
-        }
+    agent any
+
+    tools {
+        nodejs 'NodeJS-24'
     }
+
     environment {
         CI = 'true'
     }
+
     stages {
         stage('Checkout') {
             steps {
@@ -34,6 +35,7 @@ pipeline {
                         REACT_PID=\$!
                         
                         # Give the app a moment to start up
+                        echo 'Waiting for application to start...'
                         sleep 15
                         
                         # Run the Selenium tests
@@ -45,7 +47,7 @@ pipeline {
                         echo "Stopping React app (PID: \$REACT_PID)..."
                         kill \$REACT_PID
                         
-                        # Exit with the test result code
+                        # Exit with the test result code to mark the build as success/failure
                         exit \$TEST_RESULT
                     """
                 }
